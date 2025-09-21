@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CME Broker Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .logo-section p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .user-section {
+            text-align: right;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Login Styles */
+        .login-container {
+            max-width: 450px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .login-container h1 {
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .login-container p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #0056b3;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0056b3, #004085);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-error {
+            color: #dc3545;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 5px;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .quick-actions h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Policy List */
+        .policy-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .policy-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .policy-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .policy-header {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .policy-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .policy-id {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .policy-body {
+            padding: 20px;
+        }
+
+        .policy-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .policy-detail {
+            text-align: center;
+        }
+
+        .policy-detail-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .policy-detail-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-expiring {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-claim {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .policy-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .policy-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .policy-btn-primary {
+            background: #0056b3;
+            color: white;
+        }
+
+        .policy-btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .policy-btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .policy-btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .policy-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(110%);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #0056b3;
+        }
+
+        .form-section h3 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .required label::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0056b3;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-section {
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .policy-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Hidden by default */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container">
+        <h1>🏛️ CME Portal</h1>
+        <p>Comprehensive Policy Management for Trusted Brokers</p>
+        <div class="login-form">
+            <input type="email" id="loginEmail" placeholder="Email Address" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button type="button" class="login-btn" onclick="authenticateUser()">Access Portal</button>
+            <div id="loginError" class="login-error hidden"></div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardSection" class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-section">
+                        <h1>CME Capital Management</h1>
+                        <p>Broker Policy Management Portal</p>
+                    </div>
+                    <div class="user-section">
+                        <div id="userDisplayName" style="margin-bottom: 10px; font-size: 1.1em;"></div>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
+                <button class="nav-tab" onclick="showTab('policies')">📋 My Policies</button>
+                <button class="nav-tab" onclick="showTab('newSubmission')">➕ New Submission</button>
+                <button class="nav-tab" onclick="showTab('claims')">⚠️ Claims</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab" class="tab-content active">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="activePoliciesCount">0</div>
+                        <div class="stat-label">Active Policies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCoverageAmount">$0</div>
+                        <div class="stat-label">Total Coverage</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingClaimsCount">0</div>
+                        <div class="stat-label">Pending Claims</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="expiringPoliciesCount">0</div>
+                        <div class="stat-label">Expiring Soon</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="showTab('newSubmission')">🆕 Submit New Analysis</button>
+                        <button class="action-btn" onclick="openModal('endorsementModal')">📝 Request Endorsement</button>
+                        <button class="action-btn" onclick="openModal('claimModal')">🚨 File New Claim</button>
+                        <button class="action-btn" onclick="showTab('policies')">📊 View All Policies</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Policies Tab -->
+            <div id="policiesTab" class="tab-content">
+                <div id="policiesList" class="policy-grid">
+                    <!-- Policies will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- New Submission Tab -->
+            <div id="newSubmissionTab" class="tab-content">
+                <div class="form-container">
+                    <h2 style="color: #0056b3; margin-bottom: 30px;">📝 Submit New Credit Analysis Request</h2>
+                    
+                    <form id="reportForm" action="https://zshahcmecapi.app.n8n.cloud/webhook-test/ef3dd7f6-703a-440e-a56c-7a5ebf4e6ea5" method="post" enctype="multipart/form-data">
+                        <!-- Hidden fields for user context -->
+                        <input type="hidden" id="userEmailField" name="user_email">
+                        <input type="hidden" id="userPositionField" name="user_position">
+                        <input type="hidden" id="userCompanyField" name="user_company">
+                        <input type="hidden" id="userRoleField" name="user_role">
+
+                        <div class="form-section">
+                            <h3>📋 Obligor Details (Mandatory)</h3>
+                            <div class="form-grid">
+                                <div class="form-group required">
+                                    <label for="obligorName">Obligor Name:</label>
+                                    <input type="text" id="obligorName" name="company_name" required>
+                                </div>
+                                <div class="form-group required">
+                                    <label for="obligorCountry">Obligor's Country:</label>
+                                    <input type="text" id="obligorCountry" name="obligor_country" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group required">
+                                <label for="briefDescription">Brief of the Transaction:</label>
+                                <textarea id="briefDescription" name="description" rows="4" required></textarea>
+                            </div>
+
+                            <div class="form-group required">
+                                <label for="financialsFile">Upload Obligor Financials (PDF/Images):</label>
+                                <input type="file" id="financialsFile" name="financials" accept=".pdf,image/*" multiple required>
+                            </div>
+                        </div>
+
+                        <!-- Additional form sections would go here -->
+                        
+                        <button type="submit" class="submit-btn">🚀 Submit for Analysis</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Claims Tab -->
+            <div id="claimsTab" class="tab-content">
+                <div id="claimsList">
+                    <h2 style="color: #0056b3; margin-bottom: 30px;">⚠️ Claims Management</h2>
+                    <div id="claimsContent">
+                        <!-- Claims will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Endorsement Modal -->
+    <div id="endorsementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 Request Policy Endorsement</h3>
+                <span class="close" onclick="closeModal('endorsementModal')">&times;</span>
+            </div>
+            <form id="endorsementForm">
+                <div class="form-group">
+                    <label for="endorsementPolicy">Select Policy:</label>
+                    <select id="endorsementPolicy" required>
+                        <option value="">Choose a policy...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="endorsementType">Endorsement Type:</label>
+                    <select id="endorsementType" required>
+                        <option value="">Select type...</option>
+                        <option value="limit_increase">Coverage Limit Increase</option>
+                        <option value="coverage_extension">Coverage Extension</option>
+                        <option value="beneficiary_change">Beneficiary Change</option>
+                        <option value="address_change">Address Change</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="endorsementDetails">Details of Request:</label>
+                    <textarea id="endorsementDetails" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="endorsementDocuments">Supporting Documents:</label>
+                    <input type="file" id="endorsementDocuments" multiple accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+                <button type="submit" class="submit-btn">Submit Endorsement Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Claim Modal -->
+    <div id="claimModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🚨 File New Claim</h3>
+                <span class="close" onclick="closeModal('claimModal')">&times;</span>
+            </div>
+            <form id="claimForm">
+                <div class="form-group">
+                    <label for="claimPolicy">Select Policy:</label>
+                    <select id="claimPolicy" required>
+                        <option value="">Choose a policy...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="incidentDate">Date of Incident:</label>
+                    <input type="date" id="incidentDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="claimAmount">Estimated Claim Amount:</label>
+                    <input type="number" id="claimAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="claimDescription">Description of Incident:</label>
+                    <textarea id="claimDescription" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="claimEvidence">Upload Evidence (Photos, Documents, etc.):</label>
+                    <input type="file" id="claimEvidence" multiple accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+                <button type="submit" class="submit-btn">Submit Claim</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // User database
+        const users = {
+            'broker1@abcinsurance.com': { 
+                password: 'broker123', 
+                role: 'broker', 
+                company: 'ABC Insurance Brokers',
+                position: 'Senior Broker',
+                name: 'Jane Smith'
+            },
+            'broker2@xyzbrokers.com': { 
+                password: 'broker123', 
+                role: 'broker', 
+                company: 'XYZ Brokers Ltd',
+                position: 'Account Manager',
+                name: 'Bob Johnson'
+            },
+            'analyst@cme.com': { 
+                password: 'analyst123', 
+                role: 'analyst', 
+                company: 'CME Capital Management',
+                position: 'Credit Analyst',
+                name: 'John Analyst'
+            }
+        };
+
+        // Mock policy data (in real app, this would come from your backend)
+        const mockPolicies = {
+            'broker1@abcinsurance.com': [
+                {
+                    id: 'CME-2024-001234',
+                    insuredCompany: 'TechCorp Solutions Ltd',
+                    coverageType: 'Trade Credit Insurance',
+                    limit: 2500000,
+                    premium: 15000,
+                    startDate: '2024-01-15',
+                    endDate: '2025-01-15',
+                    status: 'active'
+                },
+                {
+                    id: 'CME-2024-001892',
+                    insuredCompany: 'Global Manufacturing Inc',
+                    coverageType: 'Credit Risk Protection',
+                    limit: 5000000,
+                    premium: 28000,
+                    startDate: '2024-03-01',
+                    endDate: '2025-03-01',
+                    status: 'expiring'
+                }
+            ],
+            'broker2@xyzbrokers.com': [
+                {
+                    id: 'CME-2024-002156',
+                    insuredCompany: 'Retail Chain Group',
+                    coverageType: 'Trade Credit Insurance',
+                    limit: 1500000,
+                    premium: 9500,
+                    startDate: '2024-02-10',
+                    endDate: '2025-02-10',
+                    status: 'active'
+                }
+            ]
+        };
+
+        // Mock claims data
+        const mockClaims = {
+            'broker1@abcinsurance.com': [
+                {
+                    id: 'CLM-2024-0089',
+                    policyId: 'CME-2024-001234',
+                    insuredCompany: 'TechCorp Solutions Ltd',
+                    amount: 75000,
+                    incidentDate: '2024-10-15',
+                    status: 'investigating',
+                    description: 'Customer default on payment terms'
+                }
+            ]
+        };
+
+        let currentUser = null;
+
+        // Check for saved session on page load
+        window.onload = function() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            }
+        };
+
+        // Authentication
+        function authenticateUser() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+            
+            document.getElementById('loginError').classList.add('hidden');
+            
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+            
+            if (users[email] && users[email].password === password) {
+                currentUser = {
+                    email: email,
+                    role: users[email].role,
+                    company: users[email].company,
+                    position: users[email].position,
+                    name: users[email].name
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showDashboard();
+            } else {
+                showError('Invalid email or password');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            
+            // Update user display
+            document.getElementById('userDisplayName').textContent = 
+                `${currentUser.name} - ${currentUser.company}`;
+            
+            // Fill form fields
+            document.getElementById('userEmailField').value = currentUser.email;
+            document.getElementById('userPositionField').value = currentUser.position;
+            document.getElementById('userCompanyField').value = currentUser.company;
+            document.getElementById('userRoleField').value = currentUser.role;
+            
+            // Load user data
+            loadDashboardData();
+            loadPolicies();
+            populateDropdowns();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            
+            // Reset form
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            
+            // Show login, hide dashboard
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'none';
+            
+            // Reset to overview tab
+            showTab('overview');
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to corresponding nav tab
+            event.target.classList.add('active');
+        }
+
+        // Load dashboard statistics
+        function loadDashboardData() {
+            const userPolicies = mockPolicies[currentUser.email] || [];
+            const userClaims = mockClaims[currentUser.email] || [];
+            
+            // Update stats
+            document.getElementById('activePoliciesCount').textContent = userPolicies.length;
+            
+            const totalCoverage = userPolicies.reduce((sum, policy) => sum + policy.limit, 0);
+            document.getElementById('totalCoverageAmount').textContent = 
+                '$' + totalCoverage.toLocaleString();
+            
+            document.getElementById('pendingClaimsCount').textContent = userClaims.length;
+            
+            const expiringPolicies = userPolicies.filter(policy => policy.status === 'expiring').length;
+            document.getElementById('expiringPoliciesCount').textContent = expiringPolicies;
+        }
+
+        // Load and display policies
+        function loadPolicies() {
+            const userPolicies = mockPolicies[currentUser.email] || [];
+            const policiesContainer = document.getElementById('policiesList');
+            
+            if (userPolicies.length === 0) {
+                policiesContainer.innerHTML = `
+                    <div class="policy-card">
+                        <div class="policy-body" style="text-align: center; padding: 40px;">
+                            <h3>No Policies Found</h3>
+                            <p>You don't have any active policies with CME yet.</p>
+                            <button class="action-btn" onclick="showTab('newSubmission')">Submit Your First Analysis</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            policiesContainer.innerHTML = userPolicies.map(policy => `
+                <div class="policy-card">
+                    <div class="policy-header">
+                        <div class="policy-title">${policy.insuredCompany}</div>
+                        <div class="policy-id">${policy.id}</div>
+                    </div>
+                    <div class="policy-body">
+                        <div class="policy-details">
+                            <div class="policy-detail">
+                                <div class="policy-detail-label">Coverage Type</div>
+                                <div class="policy-detail-value">${policy.coverageType}</div>
+                            </div>
+                            <div class="policy-detail">
+                                <div class="policy-detail-label">Coverage Limit</div>
+                                <div class="policy-detail-value">$${policy.limit.toLocaleString()}</div>
+                            </div>
+                            <div class="policy-detail">
+                                <div class="policy-detail-label">Annual Premium</div>
+                                <div class="policy-detail-value">$${policy.premium.toLocaleString()}</div>
+                            </div>
+                            <div class="policy-detail">
+                                <div class="policy-detail-label">Status</div>
+                                <div class="policy-detail-value">
+                                    <span class="status-badge status-${policy.status}">${policy.status}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="policy-actions">
+                            <button class="policy-btn policy-btn-primary" onclick="viewPolicyDetails('${policy.id}')">📋 View Details</button>
+                            <button class="policy-btn policy-btn-secondary" onclick="requestEndorsement('${policy.id}')">📝 Request Endorsement</button>
+                            <button class="policy-btn policy-btn-warning" onclick="fileClaim('${policy.id}')">🚨 File Claim</button>
+                            <button class="policy-btn policy-btn-secondary" onclick="downloadDocuments('${policy.id}')">📄 Documents</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Populate dropdowns for modals
+        function populateDropdowns() {
+            const userPolicies = mockPolicies[currentUser.email] || [];
+            
+            const endorsementSelect = document.getElementById('endorsementPolicy');
+            const claimSelect = document.getElementById('claimPolicy');
+            
+            // Clear existing options
+            endorsementSelect.innerHTML = '<option value="">Choose a policy...</option>';
+            claimSelect.innerHTML = '<option value="">Choose a policy...</option>';
+            
+            // Add policies to dropdowns
+            userPolicies.forEach(policy => {
+                const option = `<option value="${policy.id}">${policy.insuredCompany} (${policy.id})</option>`;
+                endorsementSelect.innerHTML += option;
+                claimSelect.innerHTML += option;
+            });
+        }
+
+        // Modal management
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Policy actions
+        function viewPolicyDetails(policyId) {
+            alert(`Viewing details for policy ${policyId}\n\nIn a full implementation, this would show comprehensive policy information, coverage details, payment history, and documentation.`);
+        }
+
+        function requestEndorsement(policyId) {
+            document.getElementById('endorsementPolicy').value = policyId;
+            openModal('endorsementModal');
+        }
+
+        function fileClaim(policyId) {
+            document.getElementById('claimPolicy').value = policyId;
+            openModal('claimModal');
+        }
+
+        function downloadDocuments(policyId) {
+            alert(`Downloading documents for policy ${policyId}\n\nIn a full implementation, this would provide access to policy certificates, endorsements, correspondence, and other relevant documents.`);
+        }
+
+        // Form submissions
+        document.getElementById('endorsementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Endorsement request submitted successfully!\n\nCME will review your request and respond within 2-3 business days.');
+            closeModal('endorsementModal');
+            this.reset();
+        });
+
+        document.getElementById('claimForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Claim submitted successfully!\n\nYour claim reference number is CLM-2024-0123.\nCME will begin investigation within 24 hours.');
+            closeModal('claimModal');
+            this.reset();
+        });
+
+        // Your existing form submission for new submissions
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const financialsFileInput = document.getElementById('financialsFile');
+            if (financialsFileInput.files.length === 0) {
+                alert('Please upload at least one financial document.');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('#reportForm .submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert('Analysis request submitted successfully!\n\nYour submission has been received and will be processed by our AI system. You will receive the analysis report via email within 15-20 minutes.');
+                this.reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form. Please try again later.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Allow Enter key to submit login
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                authenticateUser();
+            }
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
