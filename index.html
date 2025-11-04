@@ -641,7 +641,7 @@
 
                             <div class="form-group required">
                                 <label for="financialsFile">Upload Obligor Financials (PDF/Images):</label>
-                                <input type="file" id="financialsFile" name="financials" accept=".pdf,image/*" multiple required>
+                                <input type="file" id="financialsFile" name="financials" accept=".pdf,image/*,.xlsx,.xls,.doc,.docx" multiple required>
                             </div>
                         </div>
 
@@ -1082,7 +1082,7 @@
                 return response.text();
             })
             .then(data => {
-                alert('Analysis request submitted successfully!\n\nYour submission has been received and will be processed by our AI system. You will receive the analysis report via email within 15-20 minutes.');
+                alert('Analysis request submitted successfully!\n\nYour submission has been received and will be processed by our Underwriting Team. You will receive a Response with A Logged Submission ID soon.');
                 this.reset();
             })
             .catch(error => {
@@ -1111,6 +1111,7 @@
     </script>
 </body>
 </html>
+
 
 
 
